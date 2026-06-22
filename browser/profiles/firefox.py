@@ -2,24 +2,27 @@ from pathlib import Path
 import configparser
 
 def get_firefox_profile() -> Path:
-    profiles_ini = (
+    firefox_dir = (
         Path.home()
         / "AppData"
         / "Roaming"
         / "Mozilla"
         / "Firefox"
-        / "profiles.ini"
     )
 
     config = configparser.ConfigParser()
-    config.read(profiles_ini)
+    config.read(firefox_dir / "profiles.ini")
 
-    for section in config.sections():
-        if config.get(section, "Default", fallback="0") == 1:
-            path = Path(config[section]["Path"])
-            if config.get(section, "IsRelative", fallback="1") == 1:
-                return profiles_ini.parent / path
+    for section in config.sections(): # new method
+        if section.startswith("Install"):
+            return firefox_dir / config[section]["Default"]
+        
+    for section in config.sections(): #old method
+        if (
+            section.startswith("Profile")
+            and config.get(section=section, option="Default", fallback="0")
+        ):
+            return firefox_dir / config[section]["Path"]
             
-            return path
 
     raise RuntimeError("Firefox profile not found")
