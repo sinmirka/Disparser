@@ -1,5 +1,11 @@
 from winreg import HKEY_CURRENT_USER, OpenKey, QueryValueEx
 
+PROGID_MAP = {
+    "FirefoxURL": "firefox",
+    "ChromeHTML": "chrome",
+    "MSEdgeHTM": "edge",
+}
+
 def get_default_browser() -> str:
     key_path = (
         r"Software\Microsoft\Windows\Shell\Associations"
